@@ -2,6 +2,10 @@
 // Never hand-edit src/contract/*, src/demo/examplePatients.json or tests/fixtures/golden_responses.json.
 import fs from "node:fs"; import path from "node:path"; import crypto from "node:crypto"; import { fileURLToPath } from "node:url";
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
+if (process.env.VERCEL === "1") {
+  console.log("Vercel build: using checked-in contract files.");
+  process.exit(0);
+}
 // Default layout: <parent>/trackA_frontend/frontend  and  <parent>/trackA_backend/backend  (separate project folders).
 // Override with TRACKA_ARTIFACT_DIR=<path to backend/artifacts/v1.0.0> (absolute, or relative to the current directory).
 const art = path.resolve(process.env.TRACKA_ARTIFACT_DIR ?? path.join(root, "..", "..", "trackA_backend", "backend", "artifacts", "v1.0.0"));
