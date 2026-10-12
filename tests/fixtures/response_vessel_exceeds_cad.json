@@ -1,0 +1,224 @@
+{
+ "request": {
+  "request_id": "row3",
+  "patient": {
+   "age": 66,
+   "sex": "female",
+   "weight_kg": 67,
+   "height_cm": 158,
+   "diabetes": false,
+   "hypertension": true,
+   "current_smoker": false,
+   "ex_smoker": false,
+   "family_history": false,
+   "dyslipidemia": false,
+   "chronic_renal_failure": false,
+   "cerebrovascular_accident": false,
+   "airway_disease": false,
+   "thyroid_disease": false,
+   "congestive_heart_failure": false,
+   "bp_mmhg": 100,
+   "pulse_rate_bpm": 80,
+   "edema": false,
+   "weak_peripheral_pulse": false,
+   "lung_rales": false,
+   "systolic_murmur": false,
+   "diastolic_murmur": true,
+   "chest_pain_type": "nonanginal",
+   "dyspnea": true,
+   "function_class": 3,
+   "low_threshold_angina": false,
+   "q_wave": false,
+   "st_elevation": false,
+   "st_depression": true,
+   "t_inversion": false,
+   "lvh": false,
+   "poor_r_progression": false,
+   "bundle_branch_block": "none",
+   "fbs": 78,
+   "creatinine": 1.2,
+   "tg": 63,
+   "ldl": 55,
+   "hdl": 27.0,
+   "bun": 30,
+   "esr": 76,
+   "hemoglobin": 12.1,
+   "potassium": 4.4,
+   "sodium": 142,
+   "wbc": 13000,
+   "lymphocyte_pct": 18,
+   "neutrophil_pct": 72,
+   "platelets": 742,
+   "ef_tte_pct": 55,
+   "rwma_region": 0,
+   "valvular_heart_disease": "severe"
+  }
+ },
+ "response": {
+  "contract_version": "1.0.0",
+  "model_version": "v1.0.0",
+  "request_id": "row3",
+  "assessment_id": "1f9b5eab2a2751871af95b9ab1a4ab8e557850036d96c69df9c9710e3b646db1",
+  "predictions": {
+   "CAD": {
+    "target": "CAD",
+    "label": "Overall CAD",
+    "probability": 0.0945,
+    "model_type": "logistic_regression",
+    "definition": "Dataset overall CAD label (Cath = CAD). In the source data this equals >=50% narrowing in at least one of LAD/LCX/RCA for 302 of 303 patients."
+   },
+   "LAD": {
+    "target": "LAD",
+    "label": "LAD stenosis",
+    "probability": 0.1508,
+    "model_type": "logistic_regression",
+    "definition": "Whole-vessel dataset label for LAD (>=50% narrowing). A vessel-level probability only; it carries NO information about lesion location."
+   },
+   "LCX": {
+    "target": "LCX",
+    "label": "LCX stenosis",
+    "probability": 0.2171,
+    "model_type": "xgboost",
+    "definition": "Whole-vessel dataset label for LCX (>=50% narrowing). A vessel-level probability only; it carries NO information about lesion location."
+   },
+   "RCA": {
+    "target": "RCA",
+    "label": "RCA stenosis",
+    "probability": 0.1742,
+    "model_type": "logistic_regression",
+    "definition": "Whole-vessel dataset label for RCA (>=50% narrowing). A vessel-level probability only; it carries NO information about lesion location."
+   }
+  },
+  "model_performance": {
+   "CAD": {
+    "model": "LR",
+    "cv_roc_auc": 0.9252,
+    "cv_roc_auc_ci95": [
+     0.8969,
+     0.9529
+    ],
+    "cv_brier": 0.0977,
+    "cv_brier_ci95": [
+     0.078,
+     0.1171
+    ],
+    "no_skill_brier": 0.2047,
+    "calibration_slope": 1.129,
+    "ece_5bin": 0.0218,
+    "prevalence": 0.7129,
+    "auc_within_cad_positive": null,
+    "discrimination_tier": "high",
+    "note": "Strongest model. Probabilities are conditional on a referral cohort with high CAD prevalence.",
+    "evaluation": "5x5 repeated stratified CV, tuning inside training folds; CIs are patient-bootstrap on out-of-fold predictions (optimistic)"
+   },
+   "LAD": {
+    "model": "LR",
+    "cv_roc_auc": 0.8295,
+    "cv_roc_auc_ci95": [
+     0.7815,
+     0.8695
+    ],
+    "cv_brier": 0.1627,
+    "cv_brier_ci95": [
+     0.1435,
+     0.1838
+    ],
+    "no_skill_brier": 0.2429,
+    "calibration_slope": 1.148,
+    "ece_5bin": 0.0435,
+    "prevalence": 0.5842,
+    "auc_within_cad_positive": 0.618,
+    "discrimination_tier": "moderate",
+    "note": "Moderate vessel-level discrimination; estimates partly track overall CAD risk.",
+    "evaluation": "5x5 repeated stratified CV, tuning inside training folds; CIs are patient-bootstrap on out-of-fold predictions (optimistic)"
+   },
+   "LCX": {
+    "model": "XGB",
+    "cv_roc_auc": 0.7337,
+    "cv_roc_auc_ci95": [
+     0.6768,
+     0.7847
+    ],
+    "cv_brier": 0.2039,
+    "cv_brier_ci95": [
+     0.1846,
+     0.2247
+    ],
+    "no_skill_brier": 0.2385,
+    "calibration_slope": 0.924,
+    "ece_5bin": 0.0412,
+    "prevalence": 0.3927,
+    "auc_within_cad_positive": 0.624,
+    "discrimination_tier": "limited",
+    "note": "LIMITED vessel-specific discrimination: this estimate mostly tracks overall CAD risk and distinguishes poorly which vessel is involved among CAD-positive patients. Interpret as a coarse estimate; no hard label is provided.",
+    "evaluation": "5x5 repeated stratified CV, tuning inside training folds; CIs are patient-bootstrap on out-of-fold predictions (optimistic)"
+   },
+   "RCA": {
+    "model": "LR",
+    "cv_roc_auc": 0.7124,
+    "cv_roc_auc_ci95": [
+     0.6573,
+     0.7656
+    ],
+    "cv_brier": 0.2066,
+    "cv_brier_ci95": [
+     0.1883,
+     0.226
+    ],
+    "no_skill_brier": 0.2347,
+    "calibration_slope": 0.869,
+    "ece_5bin": 0.0328,
+    "prevalence": 0.3762,
+    "auc_within_cad_positive": 0.576,
+    "discrimination_tier": "limited",
+    "note": "LIMITED vessel-specific discrimination: this estimate mostly tracks overall CAD risk and distinguishes poorly which vessel is involved among CAD-positive patients. Interpret as a coarse estimate; no hard label is provided.",
+    "evaluation": "5x5 repeated stratified CV, tuning inside training folds; CIs are patient-bootstrap on out-of-fold predictions (optimistic)"
+   }
+  },
+  "consistency": {
+   "vessels_exceeding_cad": [
+    "LCX"
+   ],
+   "margin": 0.1,
+   "probabilities_modified": false,
+   "note": "Targets are modeled independently; a vessel probability above CAD is flagged, never adjusted."
+  },
+  "input_checks": {
+   "derived": {
+    "bmi": 26.84
+   },
+   "out_of_observed_range": [
+    {
+     "field": "esr",
+     "value": 76,
+     "level": "outside_central_98pct",
+     "observed_min": 1.0,
+     "observed_max": 90.0
+    },
+    {
+     "field": "platelets",
+     "value": 742,
+     "level": "outside_central_98pct",
+     "observed_min": 25.0,
+     "observed_max": 742.0
+    }
+   ],
+   "sparse_categories": [
+    {
+     "field": "diastolic_murmur",
+     "value": true,
+     "training_count": 9
+    }
+   ],
+   "extrapolation_flag": false
+  },
+  "uncertainty": null,
+  "data_support": null,
+  "population_note": "Probabilities are conditional on the training population (patients referred for angiography; 71% CAD prevalence) and are not general-population risk.",
+  "disclaimer": {
+   "short": "Decision support / educational use only. Not a diagnosis and not a substitute for formal diagnostic imaging.",
+   "text": "These estimates come from a statistical research model trained on 303 patients from a single referral cohort. They are for decision-support and educational purposes only. They are not a diagnosis, do not show where a blockage is, and are not a substitute for formal diagnostic imaging (e.g., coronary angiography or CT angiography) or evaluation by a clinician.",
+   "required_display": true
+  }
+ }
+}

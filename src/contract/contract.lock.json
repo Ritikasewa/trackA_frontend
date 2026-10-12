@@ -1,0 +1,14 @@
+{
+ "contract_version": "1.0.0",
+ "model_version": "v1.0.0",
+ "source": "backend/artifacts/v1.0.0",
+ "files": {
+  "schema/features.json": "c0ae5608af9549e89349c377de109f39ca8dc6f9f7a17bd8d807d7115e32f55b",
+  "schema/assess_request.schema.json": "de921bf042110ef035061bd1072b5c51ac23d241411fa74dd6f1e0431c0970ce",
+  "schema/assess_response.schema.json": "110b9bbcc7ceb9d8b7990a5e060d62fa7f30023246bba02ac455464ccfcb90d2",
+  "schema/error.schema.json": "7fa0f3cdc8be65855df7dc82e8fb5cb0f627ef48944fe69885b4dbe5c726dda9",
+  "tests/golden_requests.json": "cff3e1c76d8482f280efe89d47735d7236abe42b00f3ca7dacbe04dd9ff53a73",
+  "tests/golden_responses.json": "dfd17ac5be53ae8ed09e566624505a4566091622956c7ffad0c5550e67fbd1a3",
+  "model_contract.json": "69a87a82dd3ad96fefad19a1dd22a5efeac31f12adf360fdbf1355ee462ecc46"
+ }
+}

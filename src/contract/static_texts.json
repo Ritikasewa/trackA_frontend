@@ -1,0 +1,9 @@
+{
+ "disclaimer": {
+  "short": "Decision support / educational use only. Not a diagnosis and not a substitute for formal diagnostic imaging.",
+  "text": "These estimates come from a statistical research model trained on 303 patients from a single referral cohort. They are for decision-support and educational purposes only. They are not a diagnosis, do not show where a blockage is, and are not a substitute for formal diagnostic imaging (e.g., coronary angiography or CT angiography) or evaluation by a clinician.",
+  "required_display": true
+ },
+ "population_note": "Probabilities are conditional on the training population (patients referred for angiography; 71% CAD prevalence) and are not general-population risk.",
+ "consistency_margin": 0.1
+}

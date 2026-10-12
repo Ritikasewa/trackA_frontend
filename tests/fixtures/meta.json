@@ -1,0 +1,176 @@
+{
+ "contract_version": "1.0.0",
+ "model_version": "v1.0.0",
+ "disclaimer": {
+  "short": "Decision support / educational use only. Not a diagnosis and not a substitute for formal diagnostic imaging.",
+  "text": "These estimates come from a statistical research model trained on 303 patients from a single referral cohort. They are for decision-support and educational purposes only. They are not a diagnosis, do not show where a blockage is, and are not a substitute for formal diagnostic imaging (e.g., coronary angiography or CT angiography) or evaluation by a clinician.",
+  "required_display": true
+ },
+ "population_note": "Probabilities are conditional on the training population (patients referred for angiography; 71% CAD prevalence) and are not general-population risk.",
+ "targets": [
+  {
+   "id": "CAD",
+   "label": "Overall CAD",
+   "definition": "Dataset overall CAD label (Cath = CAD). In the source data this equals >=50% narrowing in at least one of LAD/LCX/RCA for 302 of 303 patients.",
+   "model_type": "logistic_regression",
+   "hyperparameters": {
+    "C": 0.1
+   },
+   "calibration": "none (raw model probabilities; Platt/isotonic did not improve validated Brier)"
+  },
+  {
+   "id": "LAD",
+   "label": "LAD stenosis",
+   "definition": "Whole-vessel dataset label for LAD (>=50% narrowing). A vessel-level probability only; it carries NO information about lesion location.",
+   "model_type": "logistic_regression",
+   "hyperparameters": {
+    "C": 0.03
+   },
+   "calibration": "none (raw model probabilities; Platt/isotonic did not improve validated Brier)"
+  },
+  {
+   "id": "LCX",
+   "label": "LCX stenosis",
+   "definition": "Whole-vessel dataset label for LCX (>=50% narrowing). A vessel-level probability only; it carries NO information about lesion location.",
+   "model_type": "xgboost",
+   "hyperparameters": {
+    "n_estimators": 100,
+    "max_depth": 2,
+    "learning_rate": 0.05,
+    "subsample": 0.8,
+    "colsample_bytree": 0.6,
+    "min_child_weight": 2,
+    "reg_lambda": 2,
+    "tree_method": "hist",
+    "random_state": 0,
+    "objective": "binary:logistic"
+   },
+   "calibration": "none (raw model probabilities; Platt/isotonic did not improve validated Brier)"
+  },
+  {
+   "id": "RCA",
+   "label": "RCA stenosis",
+   "definition": "Whole-vessel dataset label for RCA (>=50% narrowing). A vessel-level probability only; it carries NO information about lesion location.",
+   "model_type": "logistic_regression",
+   "hyperparameters": {
+    "C": 0.03
+   },
+   "calibration": "none (raw model probabilities; Platt/isotonic did not improve validated Brier)"
+  }
+ ],
+ "performance": {
+  "CAD": {
+   "model": "LR",
+   "cv_roc_auc": 0.9252,
+   "cv_roc_auc_ci95": [
+    0.8969,
+    0.9529
+   ],
+   "cv_brier": 0.0977,
+   "cv_brier_ci95": [
+    0.078,
+    0.1171
+   ],
+   "no_skill_brier": 0.2047,
+   "calibration_slope": 1.129,
+   "ece_5bin": 0.0218,
+   "prevalence": 0.7129,
+   "auc_within_cad_positive": null,
+   "discrimination_tier": "high",
+   "note": "Strongest model. Probabilities are conditional on a referral cohort with high CAD prevalence.",
+   "evaluation": "5x5 repeated stratified CV, tuning inside training folds; CIs are patient-bootstrap on out-of-fold predictions (optimistic)"
+  },
+  "LAD": {
+   "model": "LR",
+   "cv_roc_auc": 0.8295,
+   "cv_roc_auc_ci95": [
+    0.7815,
+    0.8695
+   ],
+   "cv_brier": 0.1627,
+   "cv_brier_ci95": [
+    0.1435,
+    0.1838
+   ],
+   "no_skill_brier": 0.2429,
+   "calibration_slope": 1.148,
+   "ece_5bin": 0.0435,
+   "prevalence": 0.5842,
+   "auc_within_cad_positive": 0.618,
+   "discrimination_tier": "moderate",
+   "note": "Moderate vessel-level discrimination; estimates partly track overall CAD risk.",
+   "evaluation": "5x5 repeated stratified CV, tuning inside training folds; CIs are patient-bootstrap on out-of-fold predictions (optimistic)"
+  },
+  "LCX": {
+   "model": "XGB",
+   "cv_roc_auc": 0.7337,
+   "cv_roc_auc_ci95": [
+    0.6768,
+    0.7847
+   ],
+   "cv_brier": 0.2039,
+   "cv_brier_ci95": [
+    0.1846,
+    0.2247
+   ],
+   "no_skill_brier": 0.2385,
+   "calibration_slope": 0.924,
+   "ece_5bin": 0.0412,
+   "prevalence": 0.3927,
+   "auc_within_cad_positive": 0.624,
+   "discrimination_tier": "limited",
+   "note": "LIMITED vessel-specific discrimination: this estimate mostly tracks overall CAD risk and distinguishes poorly which vessel is involved among CAD-positive patients. Interpret as a coarse estimate; no hard label is provided.",
+   "evaluation": "5x5 repeated stratified CV, tuning inside training folds; CIs are patient-bootstrap on out-of-fold predictions (optimistic)"
+  },
+  "RCA": {
+   "model": "LR",
+   "cv_roc_auc": 0.7124,
+   "cv_roc_auc_ci95": [
+    0.6573,
+    0.7656
+   ],
+   "cv_brier": 0.2066,
+   "cv_brier_ci95": [
+    0.1883,
+    0.226
+   ],
+   "no_skill_brier": 0.2347,
+   "calibration_slope": 0.869,
+   "ece_5bin": 0.0328,
+   "prevalence": 0.3762,
+   "auc_within_cad_positive": 0.576,
+   "discrimination_tier": "limited",
+   "note": "LIMITED vessel-specific discrimination: this estimate mostly tracks overall CAD risk and distinguishes poorly which vessel is involved among CAD-positive patients. Interpret as a coarse estimate; no hard label is provided.",
+   "evaluation": "5x5 repeated stratified CV, tuning inside training folds; CIs are patient-bootstrap on out-of-fold predictions (optimistic)"
+  }
+ },
+ "limitations": [
+  "Single-centre referral cohort (71% CAD prevalence); no external validation",
+  "303 patients; 119 LCX and 114 RCA positives - CIs are wide",
+  "LCX/RCA vessel-specific signal is weak (AUC within CAD-positive ~0.58-0.62)",
+  "Vessel labels are whole-vessel (>=50% narrowing); no lesion location",
+  "Several binary flags have <10 positives in training data (CHF n=1); effects unreliable",
+  "Units for most lab values are inferred from value ranges and are UNVERIFIED against dataset documentation",
+  "BP is a single value (presumed systolic) - semantics unverified",
+  "Region RWMA and Function Class are integer codes whose meanings are not documented in the provided files; the models use them as plain numbers and no meaning is assigned to any code"
+ ],
+ "consistency_warning": {
+  "margin": 0.1,
+  "description": "Display heuristic for a warning only (a vessel probability above CAD by more than the margin). Not a clinical or statistical threshold. Predicted probabilities are never modified."
+ },
+ "input_policy": {
+  "required_patient_fields": 50,
+  "imputation": "none",
+  "range_checks": "informational data-support flags only; not prediction uncertainty"
+ },
+ "training": {
+  "n": 303,
+  "class_counts": {
+   "CAD": 216,
+   "LAD": 177,
+   "LCX": 119,
+   "RCA": 114
+  },
+  "source": "z_dataset.xlsx sheet 1 (Extension of Z-Alizadeh Sani)"
+ }
+}
